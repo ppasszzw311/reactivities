@@ -6,6 +6,8 @@ import NavBar from "./NavBar";
 import ActivityDashboard from "../../features/activities/dashboard/ActivityDashboard";
 import { Activity } from "../models/activity";
 import {v4 as uuid} from 'uuid';
+import agent from "../api/agent";
+import LoadingComponent from "./LoadingComponent";
 
 function App() {
   const [activities, setActities] = useState<Activity[]>([]);
@@ -14,13 +16,20 @@ function App() {
   >(undefined);
 
   const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   // side effect
   useEffect(() => {
-    axios
-      .get<Activity[]>("http://localhost:5000/api/activities")
-      .then((response) => {
-        setActities(response.data);
+    agent.Activities.list()
+      .then(response => {
+        let activities: Activity[] = [];
+        response.forEach(activity => {
+          activity.date = activity.date.split('T')[0];
+          activities.push(activity)
+        })
+        setActities(activities);
+        setLoading(false)
       });
   }, []);
 
@@ -51,18 +60,37 @@ function App() {
 
   // 處理活動的創建
   const handleCreateOrEditActivity = (activity: Activity) => {
-    // 如果有activity 的id，將更新過的activity更新到列表
-    activity.id 
-    ? setActities([...activities.filter(x => x.id !== activity.id), activity])
-    : setActities([...activities, {...activity, id: uuid()}]);
-    setEditMode(false);
-    setSelectedActivity(activity);
+    setSubmitting(true);
+    if (activity.id) {
+      // 執行修改
+      agent.Activities.update(activity).then(() => {
+        setActities([...activities.filter(x => x.id !== activity.id), activity])
+        setSelectedActivity(activity);
+        setEditMode(false);
+        setSubmitting(false);
+      })
+    } else {
+      activity.id = uuid();
+      agent.Activities.create(activity).then(() => {
+        setActities([...activities, activity]);
+        setSelectedActivity(activity);
+        setEditMode(false);
+        setSubmitting(false);
+      })
+    }
   } 
 
   // 處理活動的刪除
   const handleDeleteActivity = (id : string) => {
-    setActities([...activities.filter(x => x.id !== id)])
+    setSubmitting(true);
+    agent.Activities.delete(id).then(() => {
+      setActities([...activities.filter(x => x.id !== id)]);
+      setSubmitting(false);
+    })
+    
   }
+
+  if (loading) return <LoadingComponent content="讀取資料中"/>
 
   return (
     <>
@@ -78,6 +106,7 @@ function App() {
           closeForm={handleFormClose}
           createOrEdit={handleCreateOrEditActivity}
           deleteActivity={handleDeleteActivity}
+          submitting={submitting}
         />
       </Container>
     </>
