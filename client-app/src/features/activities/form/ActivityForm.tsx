@@ -1,20 +1,18 @@
 import { Button, Form, Segment } from "semantic-ui-react";
 import { Activity } from "../../../app/models/activity";
 import { ChangeEvent, useState } from "react";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-interface Props {
-  activity: Activity | undefined;
-  closeForm: () => void;
-  createOrEdit: (activity: Activity) => void;
-  submitting: boolean;
-}
-
-export default function ActivityCorm({
-  activity: selectedActivity,
-  closeForm,
-  createOrEdit,
-  submitting,
-}: Props) {
+export default observer(function ActivityForm() {
+  const { activityStore } = useStore();
+  const {
+    selectedActivity,
+    closeFrom,
+    createActivity,
+    updateActivity,
+    loading,
+  } = activityStore;
   // 初始化activity
   const initialActivity = selectedActivity ?? {
     id: "",
@@ -29,7 +27,7 @@ export default function ActivityCorm({
   const [activity, setActivity] = useState(initialActivity);
 
   const handleSubmit = () => {
-    createOrEdit(activity);
+    activity.id ? updateActivity(activity) : createActivity(activity)
   };
 
   const handleInputChange = (
@@ -79,9 +77,15 @@ export default function ActivityCorm({
           name="venue"
           onChange={handleInputChange}
         />
-        <Button loading={submitting} floated="right" positive type="submit" content="儲存" />
         <Button
-          onClick={() => closeForm()}
+          loading={loading}
+          floated="right"
+          positive
+          type="submit"
+          content="儲存"
+        />
+        <Button
+          onClick={() => closeFrom()}
           floated="right"
           type="button"
           content="取消"
@@ -89,4 +93,4 @@ export default function ActivityCorm({
       </Form>
     </Segment>
   );
-}
+});

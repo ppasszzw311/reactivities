@@ -8,7 +8,7 @@ const sleep = (delay: number) => {
     })
 }
 
-axios.defaults.baseURL = 'http://localhost:5000/api';
+axios.defaults.baseURL = '/api';
 
 // 建立錯誤攔截器
 axios.interceptors.response.use(async response => {

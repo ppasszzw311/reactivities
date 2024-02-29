@@ -7,32 +7,29 @@ import {
   CardMeta,
   Image,
 } from "semantic-ui-react";
-import { Activity } from "../../../app/models/activity";
 import { useEffect, useState } from "react";
+import { useStore } from "../../../app/stores/store";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
-interface Props {
-  activity: Activity;
-  cancelSelectActivity: () => void;
-  openForm: (id: string) => void;
-}
 
-export default function ActivityDetails({
-  activity,
-  openForm,
-  cancelSelectActivity,
-}: Props) {
+
+export default function ActivityDetails() {
+  const {activityStore} = useStore();
   const [imgSrc, setImgSrc] = useState(null);
-
+  const { selectedActivity: activity, openForm, cancelSelectedActivity } =activityStore
   // 針對類別更改後的圖片修改載入
   useEffect(() => {
-    import(`../../../assets/images/categoryImages/${activity.category}.jpg`)
+    activity && import(`../../../assets/images/categoryImages/${activity.category}.jpg`)
       .then((imageModule) => {
         setImgSrc(imageModule.default);
       })
       .catch((error) => {
         console.error("圖片加載失敗", error);
       });
-  }, [activity.category]);
+  }, [activity]);
+
+  if (!activity) return <LoadingComponent />; 
+
   return (
     <Card>
       <Image src={imgSrc} />
@@ -52,7 +49,7 @@ export default function ActivityDetails({
             content="修改"
           />
           <Button
-            onClick={() => cancelSelectActivity()}
+            onClick={() => cancelSelectedActivity()}
             basic
             color="grey"
             content="返回"
