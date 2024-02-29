@@ -1,12 +1,18 @@
 import { Link } from "react-router-dom";
-import { Container } from "semantic-ui-react";
+import { Button, Container, Header, Image, Segment } from "semantic-ui-react";
 
 
 export default function HomePage() {
     return (
-        <Container style={{marginTop: '5rem'}}>
-            <h1>Hoempage</h1>
-            <h3>Go to <Link  to={'/activities'}>Activities</Link></h3>
-        </Container>
+        <Segment inverted textAlign="center" vertical className="masthead">
+            <Container text>
+                <Header as={'h1'} inverted>
+                    <Image size="massive" src='/assets/logo.png' alt='logo' style={{matginBottom: 12}}/>
+                    活動紀錄者
+                </Header>
+                <Header as={'h2'} inverted content='歡迎來到活動紀錄者'/>
+                <Button as={Link} to='/activities' size='huge' inverted content='到活動'/>
+            </Container>
+        </Segment>
     )
 }
