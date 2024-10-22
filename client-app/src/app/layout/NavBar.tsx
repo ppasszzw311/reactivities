@@ -12,6 +12,7 @@ export default function NavBar() {
                     範例網頁
                 </Menu.Item>
                 <Menu.Item as={NavLink} to='/activities' name="活動"/>
+                <Menu.Item as={NavLink} to='/errors' content="測試錯誤" />
                 <Menu.Item>
                     <Button as={NavLink} to='/create-activity' content="新增活動" />
                 </Menu.Item>
