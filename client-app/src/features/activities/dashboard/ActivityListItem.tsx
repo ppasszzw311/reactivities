@@ -1,17 +1,19 @@
-import { Button, Icon, Item, Label, Segment } from "semantic-ui-react";
+import { Button, Icon, Item, Segment } from "semantic-ui-react";
 import { Activity } from "../../../app/models/activity";
 import { Link } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { SyntheticEvent, useState } from "react";
 import { observer } from "mobx-react-lite";
+import { format } from "date-fns";
 
 interface Props {
     activity: Activity;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export default observer( function ActivityListItem({activity} : Props) {
     const {activityStore} = useStore();
-    const { loading, deleteActivity } = activityStore;
+    const { deleteActivity } = activityStore;
 
     const [target, setTarget] = useState('');
 
@@ -34,9 +36,9 @@ export default observer( function ActivityListItem({activity} : Props) {
                 </Item>
             </Item.Group>
         </Segment>
-        <Segment>
-            <span>
-                <Icon name='clock' />{activity.date} 
+        <Segment>, 
+            <span> 
+                <Icon name='clock' />{format(activity.date!, 'dd MMM yyyy h:mm aa')} 
                 <Icon name='marker' />{activity.venue}
             </span>
         </Segment>

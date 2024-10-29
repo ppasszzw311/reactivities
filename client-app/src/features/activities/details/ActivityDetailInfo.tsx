@@ -1,11 +1,13 @@
 import { Grid, Icon, Segment } from "semantic-ui-react";
 import { Activity } from "../../../app/models/activity";
 import { observer } from "mobx-react-lite";
+import { format } from "date-fns";
 
 interface Props {
   activity: Activity;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export default observer(function ActivityDetailInfo({ activity }: Props) {
   return (
     <Segment.Group>
@@ -25,7 +27,7 @@ export default observer(function ActivityDetailInfo({ activity }: Props) {
             <Icon name="calendar" size="large" color="teal" />
           </Grid.Column>
           <Grid.Column width={15}>
-            <span>{activity.date}</span>
+            <span>{format(activity.date!, 'dd MMM yyyy h:mm aa')}</span>
           </Grid.Column>
         </Grid>
       </Segment>
